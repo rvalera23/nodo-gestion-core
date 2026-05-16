@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: nodo_portainer
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer_data:/data
+
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: nodo_vault
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    environment:
+      - WEBSOCKET_ENABLED=true
+    volumes:
+      - ./vault_data:/data
+
+  duplicati:
+    image: lscr.io/linuxserver/duplicati:latest
+    container_name: nodo_backups
+    restart: unless-stopped
+    ports:
+      - "8200:8200"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Caracas
+      - SETTINGS_ENCRYPTION_KEY=ClaveSuperSeguraNodoGestion2026* # <-- ¡Nueva variable mandatoria!
+      - CLI_ARGS=--webservice-interface=any --webservice-password=admin123*
+    volumes:
+      - ./duplicati_config:/config
+      - ./duplicati_backups:/backups
+      - /root/.ssh:/root/.ssh:ro

@@ -1,0 +1,32 @@
+---
+- name: Instalacion y Configuracion de Nodo Gestion Core
+  hosts: gestion_server
+  gather_facts: yes
+  tasks:
+    - name: FASE 1 - Asegurar dependencias de sistema instaladas
+      apt:
+        name: [docker.io, docker-compose, git]
+        state: present
+        update_cache: yes
+
+    - name: FASE 2 - Crear directorios de persistencia local
+      file:
+        path: "/opt/servicios/nodo-gestion-core/{{ item }}"
+        state: directory
+        mode: '0755'
+        owner: root
+        group: root
+      loop:
+        - portainer_data
+        - vault_data
+        - duplicati_config
+        - duplicati_backups
+
+    - name: FASE 3 - Copiar el archivo docker-compose.yml original al destino
+      copy:
+        src: ../docker-compose.yml  # <-- Toma tu archivo limpio y lo transfiere
+        dest: /opt/servicios/nodo-gestion-core/docker-compose.yml
+        mode: '0644'
+
+    - name: FASE 4 - Lanzar Stack de Gestion Core
+      shell: "cd /opt/servicios/nodo-gestion-core && docker compose up -d"

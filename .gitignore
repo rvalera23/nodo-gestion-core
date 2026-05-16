@@ -1,0 +1,5 @@
+portainer_data/
+vault_data/
+duplicati_config/
+duplicati_backups/
+*.log
