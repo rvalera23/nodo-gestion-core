@@ -24,9 +24,29 @@
 
     - name: FASE 3 - Copiar el archivo docker-compose.yml original al destino
       copy:
-        src: ../docker-compose.yml  # <-- Toma tu archivo limpio y lo transfiere
+        src: ../docker-compose.yml
         dest: /opt/servicios/nodo-gestion-core/docker-compose.yml
         mode: '0644'
 
     - name: FASE 4 - Lanzar Stack de Gestion Core
       shell: "cd /opt/servicios/nodo-gestion-core && docker compose up -d"
+
+    - name: FASE 5 - Asegurar la raiz centralizada de backups locales (Estructura)
+      file:
+        path: "/opt/servicios/nodo-gestion-core/backups"
+        state: directory
+        mode: '0755'
+        owner: root
+        group: root
+
+    - name: FASE 6 - Crear subcarpetas de aplicacion por fases (Simetria _files)
+      file:
+        path: "/opt/servicios/nodo-gestion-core/backups/{{ item }}"
+        state: directory
+        mode: '0755'
+        owner: root
+        group: root
+      loop:
+        - portainer_files
+        - vaultwarden_files
+        - duplicati_files
