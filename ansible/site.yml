@@ -1,15 +1,15 @@
 ---
-- name: Instalacion y Configuracion de Nodo Gestion Core
+- name: Instalacion y Configuracion de Vaultwarden + Portainer + Duplicati
   hosts: gestion_server
   gather_facts: yes
   tasks:
-    - name: FASE 1 - Asegurar dependencias de sistema instaladas
+    - name: FASE 1 - Instalar Docker y dependencias instaladas
       apt:
         name: [docker.io, docker-compose, git]
         state: present
         update_cache: yes
 
-    - name: FASE 2 - Crear directorios de persistencia local
+    - name: FASE 2 - Crear directorios de persistencia y backups
       file:
         path: "/opt/servicios/nodo-gestion-core/{{ item }}"
         state: directory
@@ -28,10 +28,10 @@
         dest: /opt/servicios/nodo-gestion-core/docker-compose.yml
         mode: '0644'
 
-    - name: FASE 4 - Lanzar Stack de Gestion Core
+    - name: FASE 4 - Lanzar Vaultwarden + Portainer + Duplicati 
       shell: "cd /opt/servicios/nodo-gestion-core && docker compose up -d"
 
-    - name: FASE 5 - Asegurar la raiz centralizada de backups locales (Estructura)
+    - name: FASE 5 - Crear directorios de persistencia y backups
       file:
         path: "/opt/servicios/nodo-gestion-core/backups"
         state: directory
@@ -39,7 +39,7 @@
         owner: root
         group: root
 
-    - name: FASE 6 - Crear subcarpetas de aplicacion por fases (Simetria _files)
+    - name: FASE 6 - Crear subcarpetas internas de resguardo
       file:
         path: "/opt/servicios/nodo-gestion-core/backups/{{ item }}"
         state: directory

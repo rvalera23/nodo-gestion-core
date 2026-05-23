@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   portainer:
     image: portainer/portainer-ce:latest
@@ -32,8 +30,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=America/Caracas
-      - SETTINGS_ENCRYPTION_KEY=ClaveSuperSeguraNodoGestion2026* # <-- ¡Nueva variable mandatoria!
-      - CLI_ARGS=--webservice-interface=any --webservice-password=admin123*
+      - SETTINGS_ENCRYPTION_KEY=${DUPLICATI_ENCRYPTION_KEY}
+      - CLI_ARGS=--webservice-interface=any --webservice-password=${DUPLICATI_ADMIN_PASSWORD}
     volumes:
       - ./duplicati_config:/config
       - ./duplicati_backups:/backups
